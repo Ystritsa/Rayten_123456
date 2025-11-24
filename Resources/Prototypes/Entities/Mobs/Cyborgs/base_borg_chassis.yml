@@ -6,6 +6,8 @@
   save: false
   abstract: true
   components:
+  - type: DangerMob #Rayten
+    maxDanger: false # По умолчанию они не опасны, опасными их делают их модули
   - type: RequiresSkill
     RequiresEngineeringLevel: 3
     NeedCraftableSkills: true
