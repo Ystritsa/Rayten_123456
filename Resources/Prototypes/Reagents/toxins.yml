@@ -761,7 +761,7 @@
   group: Toxins
   desc: reagent-desc-hemorrhinol
   physicalDesc: reagent-physical-desc-thin
-  contrabandSeverity: Major
+  contrabandSeverity: ThirdLevel
   flavor: sharp
   color: "#96424f"
   metabolisms:
