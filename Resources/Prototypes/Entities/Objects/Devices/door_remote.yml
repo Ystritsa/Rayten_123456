@@ -60,7 +60,7 @@
       icon: *IconEmergencyAccess
 
 - type: entity
-  parent: [DoorRemoteDefault, BaseCommandContraband]
+  parent: [DoorRemoteDefault, SecondCommandContraband]
   id: DoorRemoteCommand
   name: command door remote
   components:

@@ -229,7 +229,6 @@
 - type: damageModifierSet
   id: Skeleton
   coefficients:
-    Holy: 2 # Rayten
     Blunt: 1.1
     Slash: 0.8
     Piercing: 0.6
@@ -239,7 +238,7 @@
     Asphyxiation: 0.0
     Bloodloss: 0.0
     Cellular: 0.0
-    Holy: 0.5
+    Holy: 2 # Rayten
   flatReductions:
     Blunt: 5
 
