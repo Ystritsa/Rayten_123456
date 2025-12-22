@@ -14,6 +14,7 @@ using Content.Shared.Jittering;
 using Content.Shared.CombatMode.Pacification;
 using Content.Shared.Popups;
 using Content.Shared.Humanoid;
+using Content.Shared.Vanilla.Archon.BlindPredator;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Timing;
 using System.Linq;
@@ -34,6 +35,7 @@ public sealed class ShyGuySystem : EntitySystem
     public override void Initialize()
     {
         base.Initialize();
+        SubscribeLocalEvent<ShyGuyComponent, ComponentShutdown>(OnComponentShutdown);
         SubscribeLocalEvent<ShyGuyComponent, StaminaCritEvent>(OnStamCrit);
         SubscribeLocalEvent<ShyGuyComponent, MobStateChangedEvent>(OnMobStateChanged);
         SubscribeLocalEvent<ShyGuyComponent, DamageChangedEvent>(OnDamageChanged);
@@ -42,6 +44,17 @@ public sealed class ShyGuySystem : EntitySystem
         SubscribeLocalEvent<ShyGuyComponent, ResearchAttemptEvent>(OnResearchAttempt);
         SubscribeAllEvent<ShyGuyGazeEvent>(OnGaze);
     }
+    private void OnComponentShutdown(EntityUid uid, ShyGuyComponent component, ComponentShutdown args)
+    {
+        var query = EntityQueryEnumerator<PredatorVisibleMarkComponent>();
+        while (query.MoveNext(out var ent, out var mark))
+        {
+            mark.Predators.Remove(uid);
+            Dirty(ent, mark);
+        }
+
+    }
+
     private void OnDamageChanged(EntityUid uid, ShyGuyComponent component, DamageChangedEvent args)
     {
         if (args.Origin == null)
@@ -125,7 +138,8 @@ public sealed class ShyGuySystem : EntitySystem
         if (comp.State != ShyGuyState.Calm)
             return;
 
-        comp.Targets.Add(initiator);
+        var mark = EnsureComp<PredatorVisibleMarkComponent>(initiator);
+        mark.Predators[uid] = true;
 
         comp.RageStartAt = _timing.CurTime + comp.PreparingTime;
         comp.TargetChaseEnd = comp.RageStartAt + comp.OneTargetChaseTime;
@@ -155,7 +169,12 @@ public sealed class ShyGuySystem : EntitySystem
 
         _movementSpeed.RefreshMovementSpeedModifiers(uid);
         RemCompDeferred<JitteringComponent>(uid);
-        comp.Targets.Clear();
+        var query = EntityQueryEnumerator<PredatorVisibleMarkComponent>();
+        while (query.MoveNext(out var ent, out var mark))
+        {
+            mark.Predators[uid] = false;
+            Dirty(ent, mark);
+        }
 
         if (TryComp<PryingComponent>(uid, out var pry))
             pry.Enabled = false;
@@ -199,7 +218,7 @@ public sealed class ShyGuySystem : EntitySystem
         if (user == uid)
             return false;
 
-        if (comp.Targets.Contains(user))
+        if (TryComp<PredatorVisibleMarkComponent>(user, out var mark) && mark.Predators.TryGetValue(uid, out var alreadyLooked) && alreadyLooked)
             return false;
 
         if (!HasComp<MobStateComponent>(user))

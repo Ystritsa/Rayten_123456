@@ -43,6 +43,10 @@
           5
         MaximumIdleTime: !type:Single
           50
+        AggroVisionRadius: !type:Single
+          90
+        VisionRadius: !type:Single
+          90
         NavClimb: !type:Bool
           true
         NavInteract: !type:Bool

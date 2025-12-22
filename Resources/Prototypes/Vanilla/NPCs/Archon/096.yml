@@ -20,7 +20,7 @@
       tasks:
         - !type:HTNPrimitiveTask
           operator: !type:UtilityOperator
-            proto: NearbyMeleeTargets
+            proto: Nearby096Targets
         - !type:HTNPrimitiveTask
           operator: !type:MoveToOperator
             pathfindInPlanning: true
