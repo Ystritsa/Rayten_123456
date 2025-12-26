@@ -35,6 +35,7 @@
             True:  { visible: false }
             False: { visible: true }
     - type: ShyGuy
+    - type: BlindPredator
     - type: Tag
       tags:
         - DoorBumpOpener
@@ -42,11 +43,6 @@
         - ShyGuy
     - type: Pacified
       disallowAllCombat: true
-    - type: Prying
-      pryPowered: true
-      force: true
-      speedModifier: 100
-      enabled: false
     - type: AmbientSound
       volume: 0
       range: 15

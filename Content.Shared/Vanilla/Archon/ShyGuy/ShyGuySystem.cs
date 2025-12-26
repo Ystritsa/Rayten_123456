@@ -16,6 +16,7 @@ using Content.Shared.Popups;
 using Content.Shared.Humanoid;
 using Content.Shared.Vanilla.Archon.BlindPredator;
 using Content.Shared.Weapons.Hitscan.Events;
+using Content.Shared.NPC;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Timing;
 using System.Linq;
@@ -33,42 +34,19 @@ public sealed class ShyGuySystem : EntitySystem
     [Dependency] private readonly SharedAmbientSoundSystem _ambient = default!;
     [Dependency] private readonly SharedJitteringSystem _jitter = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
+    [Dependency] private readonly SharedBlindPredatorSystem _blindpredator = default!;
+
     public override void Initialize()
     {
         base.Initialize();
-        SubscribeLocalEvent<ShyGuyComponent, ComponentShutdown>(OnComponentShutdown);
         SubscribeLocalEvent<ShyGuyComponent, StaminaCritEvent>(OnStamCrit);
         SubscribeLocalEvent<ShyGuyComponent, MobStateChangedEvent>(OnMobStateChanged);
         SubscribeLocalEvent<ShyGuyComponent, DamageChangedEvent>(OnDamageChanged);
-        SubscribeLocalEvent<ShyGuyComponent, HitscanDamageDealtEvent>(OnHitscanDamageChanged);
-
-
         SubscribeLocalEvent<ShyGuyComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshMoveSpeed);
         SubscribeLocalEvent<ShyGuyComponent, OutlineHoverEvent>(OnLook);
         SubscribeLocalEvent<ShyGuyComponent, ResearchAttemptEvent>(OnResearchAttempt);
         SubscribeAllEvent<ShyGuyGazeEvent>(OnGaze);
     }
-    private void OnComponentShutdown(EntityUid uid, ShyGuyComponent component, ComponentShutdown args)
-    {
-        var query = EntityQueryEnumerator<PredatorVisibleMarkComponent>();
-        while (query.MoveNext(out var ent, out var mark))
-        {
-            mark.Predators.Remove(uid);
-            Dirty(ent, mark);
-        }
-
-    }
-    private void OnHitscanDamageChanged(EntityUid uid, ShyGuyComponent component, HitscanDamageDealtEvent args)
-    {
-        if (args.DamageDealt.GetTotal() <= 0)
-            return;
-
-        if (!IsReachable(uid, args.Target, component, onlyHumans: false))
-            return;
-
-        SetPreparing(uid, component, args.Target);
-    }
-
     private void OnDamageChanged(EntityUid uid, ShyGuyComponent component, DamageChangedEvent args)
     {
         if (args.Origin == null)
@@ -149,8 +127,7 @@ public sealed class ShyGuySystem : EntitySystem
 
     public void SetPreparing(EntityUid uid, ShyGuyComponent comp, EntityUid initiator)
     {
-        var mark = EnsureComp<PredatorVisibleMarkComponent>(initiator);
-        mark.Predators[uid] = true;
+        _blindpredator.SetVisibility(initiator, uid, true);
 
         if (comp.State != ShyGuyState.Calm)
         {
@@ -188,13 +165,7 @@ public sealed class ShyGuySystem : EntitySystem
         RemCompDeferred<JitteringComponent>(uid);
         var query = EntityQueryEnumerator<PredatorVisibleMarkComponent>();
         while (query.MoveNext(out var ent, out var mark))
-        {
-            mark.Predators[uid] = false;
-            Dirty(ent, mark);
-        }
-
-        if (TryComp<PryingComponent>(uid, out var pry))
-            pry.Enabled = false;
+            _blindpredator.SetVisibility(ent, uid, false, mark);
 
         if (comp.CalmAmbient != null)
         {
@@ -214,9 +185,6 @@ public sealed class ShyGuySystem : EntitySystem
         comp.State = ShyGuyState.Rage;
         _movementSpeed.RefreshMovementSpeedModifiers(uid);
         RemComp<PacifiedComponent>(uid);
-
-        if (TryComp<PryingComponent>(uid, out var pry))
-            pry.Enabled = true;
 
         if (comp.RageAmbient != null)
         {
@@ -249,7 +217,7 @@ public sealed class ShyGuySystem : EntitySystem
         if (!_mobstate.IsAlive(user) || !_mobstate.IsAlive(uid))
             return false;
 
-        if (!TryComp<StaminaComponent>(uid, out var stamina) || stamina.Critical)
+        if (TryComp<StaminaComponent>(uid, out var stamina) && stamina.Critical)
             return false;
 
         if (onlyHumans && !HasComp<HumanoidAppearanceComponent>(user))

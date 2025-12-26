@@ -69,16 +69,13 @@
       learnChance: 1
     - type: HealForDamage
     - type: BlindPredator
+    - type: WithManyVoices
     - type: Prying
       pryPowered: true
       force: true
       speedModifier: 1
       useSound:
         path: /Audio/Items/crowbar.ogg
-    - type: JumpAbility
-      action: ActionGravityJump939
-    - type: NPCUseActionIfPossible
-      actionId: ActionEcholocation
     - type: Destructible
       thresholds:
       - trigger:
