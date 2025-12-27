@@ -6,7 +6,7 @@ public abstract class SharedBlindPredatorSystem : EntitySystem
     public override void Initialize()
     {
         base.Initialize();
-        SubscribeLocalEvent<BlindPredatorComponent, ComponentShutdown>(OnComponentShutdown);
+        SubscribeLocalEvent<BlindPredatorComponent, ComponentRemove>(OnComponentRemove);
         SubscribeLocalEvent<BlindPredatorComponent, ComponentStartup>(OnComponentStartup);
         SubscribeLocalEvent<BlindPredatorComponent, DamageChangedEvent>(OnDamageChanged);
         SubscribeLocalEvent<PredatorVisibleMarkComponent, ComponentStartup>(OnVictimStartup);
@@ -33,7 +33,7 @@ public abstract class SharedBlindPredatorSystem : EntitySystem
             args.Cancelled = true;
     }
 
-    private void OnComponentShutdown(EntityUid uid, BlindPredatorComponent component, ref ComponentShutdown args)
+    private void OnComponentRemove(EntityUid uid, BlindPredatorComponent component, ComponentRemove args)
     {
         var query = EntityQueryEnumerator<PredatorVisibleMarkComponent>();
         while (query.MoveNext(out var ent, out var mark))

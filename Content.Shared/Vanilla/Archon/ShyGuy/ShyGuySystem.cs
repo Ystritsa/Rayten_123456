@@ -55,7 +55,7 @@ public sealed class ShyGuySystem : EntitySystem
         if (args.DamageDelta == null || args.DamageDelta.GetTotal() <= 0)
             return;
 
-        if (!IsReachable(uid, args.Origin.Value, component, onlyHumans: false))
+        if (!IsReachable(uid, args.Origin.Value, component, strictly: false))
             return;
 
         SetPreparing(uid, component, args.Origin.Value);
@@ -117,7 +117,7 @@ public sealed class ShyGuySystem : EntitySystem
                 continue;
 
             comp.nextUpdate = curTime + TimeSpan.FromSeconds(1);
-            if (curTime >= comp.TargetChaseEnd)
+            if (curTime >= comp.RageEndAt)
                 SetCalm(uid, comp);
 
             if (comp.State == ShyGuyState.Preparing && curTime >= comp.RageStartAt)
@@ -128,24 +128,21 @@ public sealed class ShyGuySystem : EntitySystem
     public void SetPreparing(EntityUid uid, ShyGuyComponent comp, EntityUid initiator)
     {
         _blindpredator.SetVisibility(initiator, uid, true);
-
+        _popup.PopupClient("Беги", uid, initiator, PopupType.LargeCaution);
+        _audio.PlayLocal(comp.StingerSound, initiator, initiator);
         if (comp.State != ShyGuyState.Calm)
         {
-            comp.TargetChaseEnd += comp.OneTargetChaseTime;
+            comp.RageEndAt += comp.RageTime;
             return;
         }
 
         comp.RageStartAt = _timing.CurTime + comp.PreparingTime;
-        comp.TargetChaseEnd = comp.RageStartAt + comp.OneTargetChaseTime;
+        comp.RageEndAt = comp.RageStartAt + comp.RageTime;
         comp.State = ShyGuyState.Preparing;
-
-        _popup.PopupClient("Беги", uid, initiator, PopupType.LargeCaution);
-        _audio.PlayLocal(comp.StingerSound, initiator, initiator);
 
         _jitter.AddJitter(uid, 20, 20);
         _ambient.SetAmbience(uid, false);
-        _audio.PlayPredicted(comp.PreparingSound, uid, initiator);
-
+        _audio.PlayPredicted(comp.ChaseSound, uid, initiator);
         Dirty(uid, comp);
     }
 
@@ -159,7 +156,7 @@ public sealed class ShyGuySystem : EntitySystem
 
         comp.State = ShyGuyState.Calm;
         comp.RageStartAt = TimeSpan.Zero;
-        comp.TargetChaseEnd = _timing.CurTime;
+        comp.RageEndAt = _timing.CurTime;
 
         _movementSpeed.RefreshMovementSpeedModifiers(uid);
         RemCompDeferred<JitteringComponent>(uid);
@@ -200,28 +197,34 @@ public sealed class ShyGuySystem : EntitySystem
         return Resolve(uid, ref component, false) && component.State == ShyGuyState.Rage;
     }
 
-    protected bool IsReachable(EntityUid uid, EntityUid user, ShyGuyComponent comp, bool onlyHumans = true)
+    protected bool IsReachable(EntityUid uid, EntityUid user, ShyGuyComponent comp, bool strictly = true)
     {
         if (user == uid)
             return false;
-
+        //таргет не должен уже быть целью скромника
         if (TryComp<PredatorVisibleMarkComponent>(user, out var mark) && mark.Predators.TryGetValue(uid, out var alreadyLooked) && alreadyLooked)
             return false;
-
-        if (!HasComp<MobStateComponent>(user))
-            return false;
-
-        if (TryComp<BlindableComponent>(user, out var blind) && blind.IsBlind)
-            return false;
-
+        //таргет должен быть мобом
+        // if (!HasComp<MobStateComponent>(user))
+        //     return false;
+        //скромник и цель должны быть живы
         if (!_mobstate.IsAlive(user) || !_mobstate.IsAlive(uid))
             return false;
-
+        //скромник не должен быть оглушен
         if (TryComp<StaminaComponent>(uid, out var stamina) && stamina.Critical)
             return false;
 
-        if (onlyHumans && !HasComp<HumanoidAppearanceComponent>(user))
-            return false;
+        //более строгие проверки
+        if (strictly)
+        {
+            //только гуманоиды
+            if (!HasComp<HumanoidAppearanceComponent>(user))
+                return false;
+            //не слепые
+            if (TryComp<BlindableComponent>(user, out var blind) && blind.IsBlind)
+                return false;
+        }
+
 
         if (!_examine.InRangeUnOccluded(user, uid, 16f))
             return false;
