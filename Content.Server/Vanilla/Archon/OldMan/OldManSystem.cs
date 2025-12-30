@@ -156,7 +156,7 @@ public sealed class OldManSystem : EntitySystem
             if (_mind.TryGetMind(uid, out var mindId, out var mind))
                 _ghost.OnGhostAttempt(mindId, false, true, true, mind);
             _ghostrole.UnregisterGhostRole((uid, ghostRole));
-            var nextTime = _random.NextFloat(25f, 45f);
+            var nextTime = _random.NextFloat(15f, 35f);
             comp.PhaseSwitchAt = _timing.CurTime + TimeSpan.FromMinutes(nextTime);
         }
         else
@@ -297,6 +297,12 @@ public sealed class OldManSystem : EntitySystem
             if (!HasComp<MobStateComponent>(target))
                 continue;
 
+            if (!HasComp<HumanoidAppearanceComponent>(target))
+                continue;
+
+            if (TryComp<DamageableComponent>(uid, out var damagComp))
+                _damageableSystem.SetAllDamage((uid, damagComp), 0);
+
             _trans.SetCoordinates(target, coords.Value);
             var victim = EnsureComp<DimensionVictimComponent>(target);
             victim.OldMan = (uid, comp);
@@ -320,6 +326,7 @@ public sealed class OldManSystem : EntitySystem
     {
         if (!_mapLoader.TryLoadMap(comp.DimensionMap, out var dimension, out _))
             return;
+
         _mapSystem.InitializeMap(dimension.Value.Comp.MapId);
         comp.DimensionUid = dimension.Value.Owner;
         comp.PhaseSwitchAt = _timing.CurTime + TimeSpan.FromMinutes(5);
@@ -382,13 +389,13 @@ public sealed class OldManSystem : EntitySystem
         for (int i = 0; i < comp.TeleportsAmount; i++)
         {
             if (TryGetRandomExistingTile(grid.Value, out var coords))
-                Spawn(comp.TeleportPrototype, coords.Value);
+                comp.Portals.Add(Spawn(comp.TeleportPrototype, coords.Value));
         }
 
         for (int i = 0; i < comp.FakeTeleportsAmount; i++)
         {
             if (TryGetRandomExistingTile(grid.Value, out var coords))
-                Spawn(comp.FakeTeleportPrototype, coords.Value);
+                comp.Portals.Add(Spawn(comp.FakeTeleportPrototype, coords.Value));
         }
     }
 
@@ -396,10 +403,9 @@ public sealed class OldManSystem : EntitySystem
     {
         if (!TryComp<DimensionVictimComponent>(args.OtherEntity, out var victim))
             return;
-
+        QueueDel(uid);
         if (comp.IsFake)
         {
-            QueueDel(uid);
             _audio.PlayGlobal(victim.DimensionEscapeSound, args.OtherEntity);
             return;
         }
@@ -416,7 +422,13 @@ public sealed class OldManSystem : EntitySystem
             RemComp<NoirOverlayComponent>(uid);
             RemCompDeferred<JitteringComponent>(uid);
             _audio.PlayPvs(comp.DimensionEscapeSound, uid);
+            foreach(var portal in comp.Portals)
+            {
+                if (Exists(portal) && !Deleted(portal))
+                    QueueDel(portal);
+            }
         }
+
         var grid = comp.OldMan.Comp.StationGridUid;
         if (!Exists(grid) || Deleted(grid))
             return;
@@ -440,7 +452,6 @@ public sealed class OldManSystem : EntitySystem
     /// <summary>
     /// возврат всех жертв на станцию
     /// </summary>
-    /// <param name="comp"></param>
     private void ReturnAllVictims(Entity<OldManComponent> OldMan)
     {
         var victimQuery = EntityQueryEnumerator<DimensionVictimComponent>();

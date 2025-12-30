@@ -37,29 +37,31 @@
   - type: OldMan
   - type: MeleeWeapon
     angle: 0
+    attackRate: 0.2
     animation: WeaponArcBite
     damage:
       types:
         Cellular: 10
+        Structural: 10
   - type: StaminaDamageOnHit
     damage: 200
     sound: /Audio/Vanilla/Effects/Archon/106/106laugh1.ogg
   - type: HTN
     rootTask:
       task: MeleeCombatCompound
-  # - type: Fixtures
-  #   fixtures:
-  #     fix1:
-  #       shape:
-  #         !type:PhysShapeCircle
-  #         radius: 0.25
-  #       density: 1
-  #       restitution: 0
-  #       friction: 0.4
-  #       mask:
-  #       - SmallMobMask
-  #       layer:
-  #       - SmallMobLayer
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeCircle
+          radius: 0.25
+        density: 1
+        restitution: 0
+        friction: 0.4
+        mask:
+        - SmallMobMask
+        layer:
+        - SmallMobLayer
   - type: NpcFactionMember
     factions:
     - SimpleHostile
@@ -79,6 +81,38 @@
   - type: ActionGrant
     actions:
     - Action106Teleport
+  - type: Tag
+    tags:
+      - CannotSuicide
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      600: Critical
+      700: Dead
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 700
+      behaviors:
+      - !type:GibBehavior
+        recursive: false
+  - type: SlowOnDamage
+    speedModifierThresholds:
+      300: 0.7
+      400: 0.5
+      500: 0.3
+  - type: PassiveDamage
+    damageCap: 700
+    allowedStates:
+    - Alive
+    - Critical
+    damage:
+      groups:
+        Brute: -3
+        Burn: -3
+        Genetic: -0.25
+        Airloss: -0.5
 
 - type: entity
   name: Кто-то под полом
@@ -93,8 +127,8 @@
       color: Black
   - type: Pacified
   - type: MovementSpeedModifier
-    baseSprintSpeed: 3
-    baseWalkSpeed: 3
+    baseSprintSpeed: 4.5
+    baseWalkSpeed: 4.5
   - type: RepeatingTrigger
     delay: 0.1
   - type: SpawnOnTrigger
