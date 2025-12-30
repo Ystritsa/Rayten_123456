@@ -6,6 +6,7 @@ using Content.Shared.Vanilla.Archon.OldMan;
 using Content.Shared.Vanilla.Damage.Events;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
+using Content.Shared.Damage;
 using Content.Shared.Weapons.Melee.Events;
 using Content.Shared.Overlays;
 using Content.Shared.Administration;
@@ -20,6 +21,7 @@ using Content.Shared.Physics;
 using Content.Shared.Popups;
 using Content.Shared.Jittering;
 using Content.Shared.Damage.Events;
+using Content.Shared.Actions;
 using Robust.Shared.Physics.Events;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Map;
@@ -49,6 +51,9 @@ public sealed class OldManSystem : EntitySystem
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly SharedJitteringSystem _jitter = default!;
     [Dependency] private readonly DamageableSystem _damageableSystem = default!;
+    [Dependency] private readonly SharedActionsSystem _actions = default!;
+
+
     private const float UpdateRate = 0.1f;
     private float _updateDif;
     public override void Initialize()
@@ -67,6 +72,7 @@ public sealed class OldManSystem : EntitySystem
         SubscribeLocalEvent<DimensionVictimComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshMoveSpeed);
         SubscribeLocalEvent<DimensionVictimComponent, MapInitEvent>(OnVictimInit);
         SubscribeLocalEvent<DimensionVictimComponent, MobStateChangedEvent>(OnVictimStateChanged);
+
         SubscribeLocalEvent<DimensionEscapeTeleportComponent, StartCollideEvent>(OnCollide);
     }
 
@@ -125,13 +131,22 @@ public sealed class OldManSystem : EntitySystem
         ReturnAllVictims((uid,comp));
 
         if (args.NewMobState == MobState.Critical)
-            TeleportOldMan(uid, comp);
+        {
+            if (comp.InDimention)
+                return;
+
+            if (_actions.GetAction(comp.ActionEnt) is not {} action)
+                return;
+
+            _actions.ValidAction(action);
+            _actions.PerformAction(uid, action, predicted: false);
+        }
 
         //отмена тп при смерти
         if (args.NewMobState == MobState.Dead)
         {
             comp.TPState = TeleportState.NoTP;
-            _appearance.SetData(uid, OldManVisuals.teleport, comp.TPState);
+            _appearance.SetData(uid, DamageVisualizerKeys.DamageUpdateGroups, comp.TPState);
             RemComp<AdminFrozenComponent>(uid);
         }
     }
@@ -174,7 +189,7 @@ public sealed class OldManSystem : EntitySystem
             return;
 
         EnsureComp<AdminFrozenComponent>(uid);
-        _appearance.SetData(uid, OldManVisuals.teleport, TeleportState.In);
+        _appearance.SetData(uid, DamageVisualizerKeys.DamageUpdateGroups, TeleportState.In);
         _audio.PlayPvs(comp.TeleportSound, uid);
         comp.TPState = TeleportState.In;
         comp.TeleportationInEndAt = _timing.CurTime + comp.TeleportInDuration;
@@ -191,7 +206,7 @@ public sealed class OldManSystem : EntitySystem
             if (trans.GridUid == null || !TryGetTpCoords(comp, out var coords))
             {
                 comp.TPState = TeleportState.NoTP;
-                _appearance.SetData(uid, OldManVisuals.teleport, comp.TPState);
+                _appearance.SetData(uid, DamageVisualizerKeys.DamageUpdateGroups, comp.TPState);
                 RemComp<AdminFrozenComponent>(uid);
                 return;
             }
@@ -203,14 +218,14 @@ public sealed class OldManSystem : EntitySystem
 
             _trans.SetCoordinates(uid, coords.Value);
             comp.InDimention = !comp.InDimention;
-            _appearance.SetData(uid, OldManVisuals.teleport, comp.TPState);
+            _appearance.SetData(uid, DamageVisualizerKeys.DamageUpdateGroups, comp.TPState);
             _audio.PlayPvs(comp.TeleportSound, uid);
         }
         //вышли из телепорта
         if (comp.TPState == TeleportState.Out && now >= comp.TeleportationOutEndAt)
         {
             comp.TPState = TeleportState.NoTP;
-            _appearance.SetData(uid, OldManVisuals.teleport, comp.TPState);
+            _appearance.SetData(uid, DamageVisualizerKeys.DamageUpdateGroups, comp.TPState);
             RemComp<AdminFrozenComponent>(uid);
         }
     }
@@ -330,6 +345,7 @@ public sealed class OldManSystem : EntitySystem
         _mapSystem.InitializeMap(dimension.Value.Comp.MapId);
         comp.DimensionUid = dimension.Value.Owner;
         comp.PhaseSwitchAt = _timing.CurTime + TimeSpan.FromMinutes(5);
+        comp.ActionEnt = _actions.AddAction(uid, comp.ActionId);
         TeleportOldMan(uid, comp);
     }
 
@@ -368,10 +384,12 @@ public sealed class OldManSystem : EntitySystem
         if (args.NewMobState == MobState.Dead)
             ReturnVictimOnStation(uid, component);
     }
+
     private void OnRefreshMoveSpeed(EntityUid uid, DimensionVictimComponent component, RefreshMovementSpeedModifiersEvent args)
     {
         args.ModifySpeed(0.5f, 0.5f);
     }
+
     private void OnVictimInit(EntityUid uid, DimensionVictimComponent comp, ref MapInitEvent args)
     {
         comp.NextDamage = _timing.CurTime + comp.DamageInterval;
@@ -403,7 +421,9 @@ public sealed class OldManSystem : EntitySystem
     {
         if (!TryComp<DimensionVictimComponent>(args.OtherEntity, out var victim))
             return;
+
         QueueDel(uid);
+
         if (comp.IsFake)
         {
             _audio.PlayGlobal(victim.DimensionEscapeSound, args.OtherEntity);
@@ -432,6 +452,7 @@ public sealed class OldManSystem : EntitySystem
         var grid = comp.OldMan.Comp.StationGridUid;
         if (!Exists(grid) || Deleted(grid))
             return;
+
         //1. тпшимся к другому игроку
         var query = EntityQueryEnumerator<TransformComponent, HumanoidAppearanceComponent>();
         while (query.MoveNext(out var target, out var trans, out _))
