@@ -3453,3 +3453,18 @@
   id: 180
   time: '2026-01-03T21:46:04.0000000+00:00'
   url: https://github.com/RaytenCorp/Rayten/pull/417
+- author: thefuckmybrain
+  changes:
+  - message: "\u0443 \u0440\u043E\u043B\u0435\u0439 \u043A\u043E\u043C\u0430\u043D\
+      \u0434\u043E\u0432\u0430\u043D\u0438\u044F 9 \u043E.\u043D."
+    type: Tweak
+  - message: "\u0443 \u043E\u0431\u044B\u0447\u043D\u044B\u0445 \u0440\u043E\u043B\
+      \u0435\u0439 8 \u043E.\u043D."
+    type: Tweak
+  - message: "\u0443 \u043C\u043B\u0430\u0434\u0448\u0438\u0445 \u0440\u043E\u043B\
+      \u0435\u0439 (\u0430\u0441\u0441\u0438\u0441\u0442\u0435\u043D\u0442\u044B,\
+      \ \u043A\u0430\u0434\u0435\u0442\u044B) 7 \u043E.\u043D."
+    type: Tweak
+  id: 181
+  time: '2026-01-04T00:26:25.0000000+00:00'
+  url: https://github.com/RaytenCorp/Rayten/pull/418
