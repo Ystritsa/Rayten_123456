@@ -17,10 +17,6 @@
   - HandLabeler
   - BaseChemistryEmptyVial
   - Dropper
-  # Rayten-starts
-  - MedipenCase
-  - BagRecipe
-  # Rayten-ends
 
 - type: latheRecipePack
   parent: BasicChemistryStatic
