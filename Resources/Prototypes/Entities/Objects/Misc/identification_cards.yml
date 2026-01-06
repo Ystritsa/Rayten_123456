@@ -1057,7 +1057,7 @@
     jobIcon: JobIconSyndicateCommander
 
 - type: entity
-  parent: [ IDCardStandard, BaseHighlyIllegalContraband ]
+  parent: [ IDCardStandard, ThirdContraband ]
   id: NinjaIDCard
   name: ninja ID card
   suffix: Ninja
@@ -1110,7 +1110,7 @@
     - Xenoborg
 
 - type: entity
-  parent: [ IDCardStandard, BaseMagicalContraband ]
+  parent: [ IDCardStandard, MagicalContraband ]
   id: WizardIDCard
   name: wizard ID card
   components:

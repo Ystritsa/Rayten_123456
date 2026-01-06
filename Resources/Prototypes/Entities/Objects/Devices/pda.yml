@@ -1517,7 +1517,7 @@
     state: pda-ninja
 
 - type: entity
-  parent: [ BaseMajorContraband, SyndiPDA ]
+  parent: [ ThirdSyndicateContraband, SyndiPDA ]
   id: PiratePDA
   name: pirate PDA
   description: Yargh!
