@@ -100,5 +100,6 @@
     guides:
     - Chemicals
     - Chemist
-  - type: RequiresSkill #vanilla-skill-issue
-    RequiresChemistryLevel: 1
+  - type: RequiresSkill #rayten-skill-issue
+    basicSkills:
+      Medicine: 1
