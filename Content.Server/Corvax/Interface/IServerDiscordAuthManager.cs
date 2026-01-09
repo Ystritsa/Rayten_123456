@@ -1,9 +1,11 @@
-﻿using Content.Corvax.Interfaces.Shared;
+﻿using Content.Shared.Corvax.Interface;
 using Robust.Server.Player;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace Content.Corvax.Interfaces.Server;
+namespace Content.Server.Corvax.Interface;
 
 public interface IServerDiscordAuthManager : ISharedDiscordAuthManager
 {

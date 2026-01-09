@@ -2,7 +2,7 @@
 using Robust.Shared.Maths;
 using Robust.Shared.Network;
 
-namespace Content.Corvax.Interfaces.Shared;
+namespace Content.Shared.Corvax.Interface;
 
 public interface ISharedSponsorsManager
 {

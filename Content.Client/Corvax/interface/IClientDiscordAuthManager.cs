@@ -1,6 +1,6 @@
-﻿using Content.Corvax.Interfaces.Shared;
+﻿using Content.Shared.Corvax.Interface;
 
-namespace Content.Corvax.Interfaces.Client;
+namespace Content.Client.Corvax.Interface;
 
 public interface IClientDiscordAuthManager : ISharedDiscordAuthManager
 {
