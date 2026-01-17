@@ -29,18 +29,16 @@ def detect_encoding(file_path):
     return chardet.detect(raw_data)['encoding']
 
 def parse_ent_blocks(file_path):
-    try:
-        encoding = detect_encoding(file_path)
-        with open(file_path, 'r', encoding=encoding) as file:
-            content = file.read()
-    except UnicodeDecodeError:
-        print(f"Ошибка при чтении файла {file_path}. Попытка чтения в UTF-8.")
+    for enc in ('utf-8', 'utf-8-sig', 'windows-1252', 'windows-1251'):
         try:
-            with open(file_path, 'r', encoding='utf-8') as file:
+            with open(file_path, 'r', encoding=enc) as file:
                 content = file.read()
+            break
         except UnicodeDecodeError:
-            print(f"Не удалось прочитать файл {file_path}. Пропускаем.")
-            return {}
+            continue
+    else:
+        print(f"Не удалось прочитать файл {file_path}. Пропускаем.")
+        return {}
 
     ent_blocks = {}
     current_ent = None
@@ -116,5 +114,5 @@ def remove_duplicates(root_dir):
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     main_folder = find_top_level_dir(script_dir)
-    root_dir = os.path.join(main_folder, "Resources\\Locale\\en-US")
+    root_dir = os.path.join(main_folder, "Resources\\Locale\\ru-RU")
     remove_duplicates(root_dir)
