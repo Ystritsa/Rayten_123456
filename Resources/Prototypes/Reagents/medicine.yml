@@ -1175,13 +1175,13 @@
         - !type:MetabolizerTypeCondition
           type: [ Skrell ]
         - !type:TotalDamageCondition
-          max: 25
+          max: 45
         damage:
           groups:
-            Brute: -0.7
-            Burn: -0.7
+            Brute: -1.5
+            Burn: -1.5
           types:
-            Poison: -0.5
+            Poison: -1.5
     # RAYTEN ENDS
   reactiveEffects:
     Extinguish:
