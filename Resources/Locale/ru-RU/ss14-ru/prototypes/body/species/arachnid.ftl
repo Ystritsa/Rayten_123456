@@ -33,9 +33,21 @@ ent-OrganArachnidFootRight = { ent-OrganBaseFootRight }
     .desc = { ent-OrganBaseFootRight.desc }
 ent-OrganArachnidBrain = { ent-OrganBaseBrain }
     .desc = { ent-OrganBaseBrain.desc }
-
+ent-OrganArachnidEyes = { ent-OrganBaseEyes }
+    .desc = { ent-OrganBaseEyes.desc }
+ent-OrganArachnidTongue = { ent-OrganBaseTongue }
+    .desc = { ent-OrganBaseTongue.desc }
 ent-OrganArachnidAppendix = { ent-OrganBaseAppendix }
     .desc = { ent-OrganBaseAppendix.desc }
 ent-OrganArachnidEars = { ent-OrganBaseEars }
     .desc = { ent-OrganBaseEars.desc }
-
+ent-OrganArachnidLungs = { ent-OrganBaseLungs }
+    .desc = { ent-OrganBaseLungs.desc }
+ent-OrganArachnidHeart = { ent-OrganBaseHeart }
+    .desc = { ent-OrganBaseHeart.desc }
+ent-OrganArachnidStomach = { ent-OrganBaseStomach }
+    .desc = { ent-OrganBaseStomach.desc }
+ent-OrganArachnidLiver = { ent-OrganBaseLiver }
+    .desc = { ent-OrganBaseLiver.desc }
+ent-OrganArachnidKidneys = { ent-OrganBaseKidneys }
+    .desc = { ent-OrganBaseKidneys.desc }

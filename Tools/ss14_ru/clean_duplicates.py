@@ -116,5 +116,5 @@ def remove_duplicates(root_dir):
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     main_folder = find_top_level_dir(script_dir)
-    root_dir = os.path.join(main_folder, "Resources\\Locale\\ru-RU")
+    root_dir = os.path.join(main_folder, "Resources\\Locale\\en-US")
     remove_duplicates(root_dir)

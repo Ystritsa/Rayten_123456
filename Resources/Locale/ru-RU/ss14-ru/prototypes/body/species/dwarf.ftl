@@ -7,4 +7,9 @@ ent-OrganDwarf = { ent-OrganBase }
     .desc = { ent-OrganBase.desc }
 ent-OrganDwarfMetabolizer = { "" }
     .desc = { "" }
-
+ent-OrganDwarfStomach = { ent-OrganDwarfMetabolizer }
+    .desc = { ent-OrganDwarfMetabolizer.desc }
+ent-OrganDwarfLiver = { ent-OrganDwarfMetabolizer }
+    .desc = { ent-OrganDwarfMetabolizer.desc }
+ent-OrganDwarfHeart = { ent-OrganDwarfMetabolizer }
+    .desc = { ent-OrganDwarfMetabolizer.desc }

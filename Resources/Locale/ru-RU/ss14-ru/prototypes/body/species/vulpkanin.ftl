@@ -45,7 +45,8 @@ ent-OrganVulpkaninLungs = { ent-OrganBaseLungs }
     .desc = { ent-OrganBaseLungs.desc }
 ent-OrganVulpkaninHeart = { ent-OrganBaseHeart }
     .desc = { ent-OrganBaseHeart.desc }
-
+ent-OrganVulpkaninStomach = { ent-OrganBaseStomach }
+    .desc = { ent-OrganBaseStomach.desc }
 ent-OrganVulpkaninLiver = { ent-OrganBaseLiver }
     .desc = { ent-OrganBaseLiver.desc }
 ent-OrganVulpkaninKidneys = { ent-OrganBaseKidneys }

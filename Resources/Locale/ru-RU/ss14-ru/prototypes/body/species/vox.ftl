@@ -33,11 +33,21 @@ ent-OrganVoxFootRight = { ent-OrganBaseFootRight }
     .desc = { ent-OrganBaseFootRight.desc }
 ent-OrganVoxBrain = { ent-OrganBaseBrain }
     .desc = { ent-OrganBaseBrain.desc }
-
+ent-OrganVoxEyes = { ent-OrganBaseEyes }
+    .desc = { ent-OrganBaseEyes.desc }
 ent-OrganVoxTongue = { ent-OrganBaseTongue }
     .desc = { ent-OrganBaseTongue.desc }
 ent-OrganVoxAppendix = { ent-OrganBaseAppendix }
     .desc = { ent-OrganBaseAppendix.desc }
 ent-OrganVoxEars = { ent-OrganBaseEars }
     .desc = { ent-OrganBaseEars.desc }
-
+ent-OrganVoxLungs = { ent-OrganBaseLungs }
+    .desc = { ent-OrganBaseLungs.desc }
+ent-OrganVoxHeart = { ent-OrganBaseHeart }
+    .desc = { ent-OrganBaseHeart.desc }
+ent-OrganVoxStomach = { ent-OrganBaseStomach }
+    .desc = { ent-OrganBaseStomach.desc }
+ent-OrganVoxLiver = { ent-OrganBaseLiver }
+    .desc = { ent-OrganBaseLiver.desc }
+ent-OrganVoxKidneys = { ent-OrganBaseKidneys }
+    .desc = { ent-OrganBaseKidneys.desc }

@@ -43,6 +43,11 @@ ent-OrganSkrellEars = { ent-OrganBaseEars }
     .desc = { ent-OrganBaseEars.desc }
 ent-OrganSkrellLungs = { ent-OrganBaseLungs }
     .desc = { ent-OrganBaseLungs.desc }
-
+ent-OrganSkrellHeart = { ent-OrganBaseHeart }
+    .desc = { ent-OrganBaseHeart.desc }
+ent-OrganSkrellStomach = { ent-OrganBaseStomach }
+    .desc = { ent-OrganBaseStomach.desc }
+ent-OrganSkrellLiver = { ent-OrganBaseLiver }
+    .desc = { ent-OrganBaseLiver.desc }
 ent-OrganSkrellKidneys = { ent-OrganBaseKidneys }
     .desc = { ent-OrganBaseKidneys.desc }

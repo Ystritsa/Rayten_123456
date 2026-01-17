@@ -45,7 +45,8 @@ ent-OrganReptilianLungs = { ent-OrganBaseLungs }
     .desc = { ent-OrganBaseLungs.desc }
 ent-OrganReptilianHeart = { ent-OrganBaseHeart }
     .desc = { ent-OrganBaseHeart.desc }
-
+ent-OrganReptilianStomach = { ent-OrganBaseStomach }
+    .desc = { ent-OrganBaseStomach.desc }
 ent-OrganReptilianLiver = { ent-OrganBaseLiver }
     .desc = { ent-OrganBaseLiver.desc }
 ent-OrganReptilianKidneys = { ent-OrganBaseKidneys }
