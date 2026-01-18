@@ -1,0 +1,9 @@
+author: "thefuckmybrain"
+time: "2026-01-18T10:55:24.0000000+00:00"
+url: "https://github.com/RaytenCorp/Rayten/pull/431"
+changes:
+- &1325389893 type: &692944785 "Add"
+  &80518409 message: "Добавлен новый архонт конфетница (класс: «Безопасный»)"
+- type: "Add"
+  message: "Добавлен новый архонт живое оружие (класс: «Безопасный»)"
+...
