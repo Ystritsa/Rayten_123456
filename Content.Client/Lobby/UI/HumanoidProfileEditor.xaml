@@ -3,6 +3,7 @@
               xmlns:humanoid="clr-namespace:Content.Client.Humanoid"
               xmlns:cc="clr-namespace:Content.Client.Administration.UI.CustomControls"
               xmlns:ui="clr-namespace:Content.Client.Lobby.UI"
+              xmlns:profile="clr-namespace:Content.Client.Lobby.UI.ProfileEditorControls"
               HorizontalExpand="True">
     <!-- Left side -->
     <BoxContainer Orientation="Vertical"
@@ -191,7 +192,7 @@
     <BoxContainer Orientation="Vertical"
             VerticalExpand="True"
             VerticalAlignment="Center">
-        <SpriteView Name="SpriteView"
+        <profile:ProfilePreviewSpriteView Name="SpriteView"
                 Scale="8 8"
                 Margin="4"
                 SizeFlagsStretchRatio="1"/>
