@@ -1,0 +1,7 @@
+author: "thefuckmybrain"
+time: "2026-01-29T13:31:35.0000000+00:00"
+url: "https://github.com/RaytenCorp/Rayten/pull/435"
+changes:
+- type: "Add"
+  message: "Голоса оптимизированы и теперь работают в облачке без имени"
+...
